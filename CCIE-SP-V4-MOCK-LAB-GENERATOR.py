@@ -5,80 +5,82 @@ import os
 #create classes that will allow for different types of output: printed to the terminal/HTML/file.
 class ConfigGenerator:
     def __init__(self):
-        self.config = ''
-        self.__task = 1
-        self.__section = 1
+        self._config = ''
+        self._task = 1
+        self._section = 1
 
     def addBreaks(self):
-        self.config = self.config + '\n' * 2
+        self._config = self._config + '\n' * 2
 
     def addHrule(self):
-        self.config = self.config + '-' * 75 + '\n'
+        self._config = self._config + '-' * 75 + '\n'
 
     def addHeader(self, string):
-        self.config = self.config + str(self.__section) + ". " + string + '\n'
-        self.__section = self.__section + 1
-        self.__task = 1
+        self._section = self._section + 1
+        self._config = self._config + str(self._section) + ". " + string + '\n'
+        self._task = 1
 
     def add(self, string):
-        self.config = self.config + string + '\n'
+        self._config = self._config + string + '\n'
 
     def addTask(self, string):
-        self.config = self.config + '[ ]' + str(self.__section) + "." + str(self.__task) + " " + string + '\n'
-        self.__task = self.__task + 1
+        self._config = self._config + '[ ]' + str(self._section) + "." + str(self._task) + " " + string + '\n'
+        self._task = self._task + 1
 
     def addSection(self, string):
-        self.config = self.config + string + '\n'
+        self._config = self._config + str(self._section) + ". " + string + '\n'
 
     def output(self):
-        print self.config
+        print self._config
 
 class HtmlGenerator(ConfigGenerator):
 
     def __init__(self):
-        self.filename = open('CCIE-SPv4-MOCK-LAB.html', 'w')
-        self.config = ''
-        self.config = '<!DOCTYPE html><html><head>'
-        self.config = self.config + '<link rel="stylesheet" href="https://picturepan2.github.io/spectre/css/spectre.css" />'
-        self.config = self.config + '</head><body>'
-        self.config = self.config + '<div class="container"><div class="columns"><div class="column col-12">'
-        self.__task = 1
-        self.__section = 1
+        self._filename = open('CCIE-SPv4-MOCK-LAB.html', 'w')
+        self._config = ''
+        self._config = '<!DOCTYPE html><html><head>'
+        self._config = self._config + '<link rel="stylesheet" href="https://picturepan2.github.io/spectre/css/spectre.css" />'
+        self._config = self._config + '</head><body>'
+        self._config = self._config + '<div class="container"><div class="columns"><div class="column col-12">'
+        self._task = 1
+        self._section = 1
 
     def addHeader(self, string):
-        self.config = self.config + '<h2>' + str(self.__section) + ". " + string + '</h2><br>';
-        self.__section = self.__section + 1
-        self.__task = 1
+        self._section = self._section + 1
+        self._config = self._config + '<h2>' + str(self._section) + ". " + string + '</h2><br>';
+        self._task = 1
 
     def addBreaks(self):
-        self.config = self.config + '<br>'
+        self._config = self._config + '<br>'
 
     def addHrule(self):
-        self.config = self.config + '<hr>'
+        self._config = self._config + '<hr>'
 
     def addSection(self, string):
-        self.config = self.config + '<h4>' + string + '</h4><br>';
+        self._config = self._config + '<h2>' + str(self._section) + ". " + string + '</h2><br>';
 
     def add(self, string):
-        self.config = self.config + string + '<br>';
+        self._config = self._config + string + '<br>';
 
     def addTask(self, string):
-        self.config = self.config + '<input type="checkbox">' + str(self.__section) + "." + str(self.__task) + " " + string + '</input><br>'
-        self.__task = self.__task + 1
+        self._config = self._config + '<input type="checkbox">' + str(self._section) + "." + str(self._task) + " " + string + '</input><br>'
+        self._task = self._task + 1
 
     def output(self):
-        self.config = self.config + '</div></body></html>'
-        self.filename.write(self.config)
-        self.filename.close()
+        self._config = self._config + '</div></body></html>'
+        self._filename.write(self._config)
+        self._filename.close()
 
 class FileGenerator(ConfigGenerator):
     def __init__(self):
-        self.filename = open('CCIE-SPv4-MOCK-LAB.txt', 'w')
-        self.config = ''
+        self._filename = open('CCIE-SPv4-MOCK-LAB.txt', 'w')
+        self._config = ''
+        self._task = 1
+        self._section = 1
 
     def output(self):
-        self.filename.write(self.config)
-        self.filename.close()
+        self._filename.write(self._config)
+        self._filename.close()
 
 #this triggers the type of output, select HtmlGenerator for an html file, select ConfigGenerator for a screen print and select FileGenerator for a txt file.
 
@@ -96,9 +98,6 @@ while hook is True:
     else:
         print "Please just enter 'TEXT' or 'HTML'!"
         raw_input("Please hit enter to retry.")
-        hook = True
-
-#c = FileGenerator()
 
 #define network nodes in each SP via lists
 ISP1 = ["PE1", "PE2", "P1", "P2", "ASBR1"]
@@ -119,8 +118,6 @@ ospf_adv_type = ["specific network statements", "the interface command", "a very
 
 #PE-CE peering protocols
 PE_CE_PROT = ["OSPF", "RIPv2", "EIGRP", "STATIC", "BGP"]
-#ConfigGenerator.section = 1
-#ConfigGenerator.task = 1
 
 c.add("Welcome to the CCIE-SPv4 MOCK LAB random task generator!")
 c.add("Please use these tasks with the prebuilt two ISP topology.")
@@ -128,7 +125,7 @@ c.add("As with the real lab you only have 5 hours to complete these tasks.")
 c.add("Your topology should be prebuilt and pre IP'ed (v4/v6).")
 c.add("Please stop and verify before you start your timer!")
 c.addBreaks()
-c.addHeader("Core Routing")
+c.addSection("Core Routing")
 c.add("This section is worth 27% of the total points")
 c.addHrule()
 
@@ -423,9 +420,6 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
 else:
     c.add("While ISP2 does honor %s classes of markings they have decided to not do anythings with the markings on a per hop basis, consider yourself lucky?" % ISP2_NUMBER_OF_CORE_QOS)
     c.addBreaks()
-
-#ConfigGenerator.section = 2
-#ConfigGenerator.task = 1
 
 c.addHeader("Service Provider based services")
 c.add("This section is worth 26% of the total points")
