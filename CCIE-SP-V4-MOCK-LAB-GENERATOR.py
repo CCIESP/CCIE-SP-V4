@@ -1,12 +1,13 @@
 # CCIE SP lab section task generator
 import random
-import sys
 import os
 
 #create classes that will allow for different types of output: printed to the terminal/HTML/file.
 class ConfigGenerator:
     def __init__(self):
         self.config = ''
+        self.__task = 1
+        self.__section = 1
 
     def addBreaks(self):
         self.config = self.config + '\n' * 2
@@ -15,14 +16,16 @@ class ConfigGenerator:
         self.config = self.config + '-' * 75 + '\n'
 
     def addHeader(self, string):
-        self.config = self.config + str(self.section) + ". " + string + '\n'
+        self.config = self.config + str(self.__section) + ". " + string + '\n'
+        self.__section = self.__section + 1
+        self.__task = 1
 
     def add(self, string):
         self.config = self.config + string + '\n'
 
     def addTask(self, string):
-        self.config = self.config + '[ ]' + str(self.section) + "." + str(self.task) + " " + string + '\n'
-        self.task = self.task + 1
+        self.config = self.config + '[ ]' + str(self.__section) + "." + str(self.__task) + " " + string + '\n'
+        self.__task = self.__task + 1
 
     def addSection(self, string):
         self.config = self.config + string + '\n'
@@ -39,9 +42,13 @@ class HtmlGenerator(ConfigGenerator):
         self.config = self.config + '<link rel="stylesheet" href="https://picturepan2.github.io/spectre/css/spectre.css" />'
         self.config = self.config + '</head><body>'
         self.config = self.config + '<div class="container"><div class="columns"><div class="column col-12">'
+        self.__task = 1
+        self.__section = 1
 
     def addHeader(self, string):
-        self.config = self.config + '<h2>' + str(self.section) + ". " + string + '</h2><br>';
+        self.config = self.config + '<h2>' + str(self.__section) + ". " + string + '</h2><br>';
+        self.__section = self.__section + 1
+        self.__task = 1
 
     def addBreaks(self):
         self.config = self.config + '<br>'
@@ -56,8 +63,8 @@ class HtmlGenerator(ConfigGenerator):
         self.config = self.config + string + '<br>';
 
     def addTask(self, string):
-        self.config = self.config + '<input type="checkbox">' + str(self.section) + "." + str(self.task) + " " + string + '</input><br>'
-        self.task = self.task + 1
+        self.config = self.config + '<input type="checkbox">' + str(self.__section) + "." + str(self.__task) + " " + string + '</input><br>'
+        self.__task = self.__task + 1
 
     def output(self):
         self.config = self.config + '</div></body></html>'
@@ -112,8 +119,8 @@ ospf_adv_type = ["specific network statements", "the interface command", "a very
 
 #PE-CE peering protocols
 PE_CE_PROT = ["OSPF", "RIPv2", "EIGRP", "STATIC", "BGP"]
-ConfigGenerator.section = 1
-ConfigGenerator.task = 1
+#ConfigGenerator.section = 1
+#ConfigGenerator.task = 1
 
 c.add("Welcome to the CCIE-SPv4 MOCK LAB random task generator!")
 c.add("Please use these tasks with the prebuilt two ISP topology.")
@@ -256,9 +263,9 @@ if MPLS_TYPE_RANDOM == "LDP":
     c.addTask("Enable MPLS Session Protection on all devices.")
     c.addTask("Enable MPLS LDP authentication using a %s methodolgy with the password 'cisco'." % random.choice(MPLS_AUTH))
     if random.randint(0,1) == 0:
-        c.addTask("Distribute labels for LDP for all IGP links.")
+        c.addTask("Distribute labels for all IGP links.")
     else:
-        c.addTask("Distribute labels for LDP for Loopbacks ONLY using %s" % random.choice(MPLS_LABEL_TYPE))
+        c.addTask("Distribute labels for Loopbacks ONLY using %s" % random.choice(MPLS_LABEL_TYPE))
 elif MPLS_TYPE_RANDOM == "RSVP-TE":
     c.add("This entire section needs to be reviewed and tested in VIRL! it maybe removed in the future!")
     c.addTask("Enable MPLS RSVP-TE on all IGP links in ISP1.")
@@ -267,6 +274,10 @@ elif MPLS_TYPE_RANDOM == "RSVP-TE":
 else:
     c.add("This entire section needs to be reviewed and tested in VIRL! it maybe removed in the future!")
     c.addTask("Enable BGP+LABEL in ISP1 to work based on the BGP architecture above.")
+    if random.randint(0,1) == 0:
+        c.addTask("Distribute labels for all IGP links.")
+    else:
+        c.addTask("Distribute labels for Loopbacks ONLY.")
 c.addTask("Configure the devices in ISP1 to do the following with an TTL: %s." % random.choice(MPLS_TTL))
 c.addBreaks()
 
@@ -279,9 +290,9 @@ if MPLS_TYPE_RANDOM == "LDP":
     c.addTask("Enable MPLS Session Protection on all devices.")
     c.addTask("Enable MPLS LDP authentication using a %s methodolgy with the password 'cisco'." % random.choice(MPLS_AUTH))
     if random.randint(0,1) == 0:
-        c.addTask("Distribute labels for LDP for all IGP links.")
+        c.addTask("Distribute labels for all IGP links.")
     else:
-        c.addTask("Distribute labels for LDP for Loopbacks ONLY using %s" % random.choice(MPLS_LABEL_TYPE))
+        c.addTask("Distribute labels for Loopbacks ONLY using %s" % random.choice(MPLS_LABEL_TYPE))
 elif MPLS_TYPE_RANDOM == "RSVP-TE":
     c.add("This entire section needs to be reviewed and tested in VIRL! it maybe removed in the future!")
     c.addTask("Enable MPLS RSVP-TE on all IGP links in ISP2.")
@@ -290,6 +301,10 @@ elif MPLS_TYPE_RANDOM == "RSVP-TE":
 else:
     c.add("This entire section needs to be reviewed and tested in VIRL! it maybe removed in the future!")
     c.addTask("Enable BGP+LABEL in ISP2 to work based on the BGP architecture above.")
+    if random.randint(0,1) == 0:
+        c.addTask("Distribute labels for all IGP links.")
+    else:
+        c.addTask("Distribute labels for Loopbacks ONLY.")
 c.addTask("Configure the devices in ISP2 to do the following with an TTL: %s." % random.choice(MPLS_TTL))
 c.addBreaks()
 
@@ -305,17 +320,18 @@ c.addBreaks()
 CORE_QOS_CLASSES = ["Voice", "Video", "Business", "Critical", "Best Effort"]
 CORE_QOS_DECISION = ["QGROUP", "EXP", "NONE"]
 CORE_QOS_BEST_EFFORT = ["WRED", "Tail Drop", "CBWFQ remaining bandwidth"]
-NUMBER_OF_CORE_QOS = random.randint(3,5)
+
+ISP1_NUMBER_OF_CORE_QOS = random.randint(3,5)
 c.add("ISP1 Core QoS")
-c.add("ISP1 today honors %s classes of QoS in the Core." % NUMBER_OF_CORE_QOS)
+c.add("ISP1 today honors %s classes of QoS in the Core." % ISP1_NUMBER_OF_CORE_QOS)
 if random.choice(CORE_QOS_DECISION) == "EXP":
-    if NUMBER_OF_CORE_QOS == 3:
+    if ISP1_NUMBER_OF_CORE_QOS == 3:
         c.add("ISP1 honors the following classes: Voice (EXP5), Business (EXP2) and Best Effort (EXP0).")
         c.addTask("ISP1 gives EXP5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(20, 40))
         c.addTask("ISP1 gives EXP2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
         c.addBreaks()
-    elif NUMBER_OF_CORE_QOS == 4:
+    elif ISP1_NUMBER_OF_CORE_QOS == 4:
         c.add("ISP1 honors the following classes: Voice (EXP5), Video (EXP4), Business (EXP2) and Best Effort (EXP0).")
         c.addTask("ISP1 gives EXP5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(10, 20))
         c.addTask("ISP1 gives EXP4 CBWFQ treatment and a bandwidth guarantee of %s percent.." % random.randint(20, 40))
@@ -331,13 +347,13 @@ if random.choice(CORE_QOS_DECISION) == "EXP":
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
         c.addBreaks()
 elif random.choice(CORE_QOS_DECISION) == "QGROUP":
-    if NUMBER_OF_CORE_QOS == 3:
+    if ISP1_NUMBER_OF_CORE_QOS == 3:
         c.add("ISP1 honors the following classes: Voice (QGroup5), Business (QGroup2) and Best Effort (QGroup0).")
         c.addTask("ISP1 gives QGroup5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(20, 40))
         c.addTask("ISP1 gives QGroup2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
         c.addBreaks()
-    elif NUMBER_OF_CORE_QOS == 4:
+    elif ISP1_NUMBER_OF_CORE_QOS == 4:
         c.add("ISP1 honors the following classes: Voice (QGroup5), Video (QGroup4), Business (QGroup2) and Best Effort (QGroup0).")
         c.addTask("ISP1 gives QGroup5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(10, 20))
         c.addTask("ISP1 gives QGroup4 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 40))
@@ -353,21 +369,21 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
         c.addBreaks()
 else:
-    c.add("While ISP1 does honor %s classes of markings they have decided to not do anythings with the markings on a per hop basis, consider yourself lucky?" % NUMBER_OF_CORE_QOS)
+    c.add("While ISP1 does honor %s classes of markings they have decided to not do anythings with the markings on a per hop basis, consider yourself lucky?" % ISP1_NUMBER_OF_CORE_QOS)
     c.addBreaks()
 
 #ISP2 Core QoS
-NUMBER_OF_CORE_QOS = random.randint(3,5)
+ISP2_NUMBER_OF_CORE_QOS = random.randint(3,5)
 c.add("ISP2 Core QoS")
-c.add("ISP2 today honors %s classes of QoS in the Core." % NUMBER_OF_CORE_QOS)
+c.add("ISP2 today honors %s classes of QoS in the Core." % ISP2_NUMBER_OF_CORE_QOS)
 if random.choice(CORE_QOS_DECISION) == "EXP":
-    if NUMBER_OF_CORE_QOS == 3:
+    if ISP2_NUMBER_OF_CORE_QOS == 3:
         c.add("ISP2 honors the following classes: Voice (EXP5), Business (EXP2) and Best Effort (EXP0).")
         c.addTask("ISP2 gives EXP5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(20, 40))
         c.addTask("ISP2 gives EXP2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
         c.addBreaks()
-    elif NUMBER_OF_CORE_QOS == 4:
+    elif ISP2_NUMBER_OF_CORE_QOS == 4:
         c.add("ISP2 honors the following classes: Voice (EXP5), Video (EXP4), Business (EXP2) and Best Effort (EXP0).")
         c.addTask("ISP2 gives EXP5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(10, 20))
         c.addTask("ISP2 gives EXP4 CBWFQ treatment and a bandwidth guarantee of %s percent.." % random.randint(20, 40))
@@ -383,13 +399,13 @@ if random.choice(CORE_QOS_DECISION) == "EXP":
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
         c.addBreaks()
 elif random.choice(CORE_QOS_DECISION) == "QGROUP":
-    if NUMBER_OF_CORE_QOS == 3:
+    if ISP2_NUMBER_OF_CORE_QOS == 3:
         c.add("ISP2 honors the following classes: Voice (QGroup5), Business (QGroup2) and Best Effort (QGroup0).")
         c.addTask("ISP2 gives QGroup5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(20, 40))
         c.addTask("ISP2 gives QGroup2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
         c.addBreaks()
-    elif NUMBER_OF_CORE_QOS == 4:
+    elif ISP2_NUMBER_OF_CORE_QOS == 4:
         c.add("ISP2 honors the following classes: Voice (QGroup5), Video (QGroup4), Business (QGroup2) and Best Effort (QGroup0).")
         c.addTask("ISP2 gives QGroup5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(10, 20))
         c.addTask("ISP2 gives QGroup4 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 40))
@@ -405,12 +421,11 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
         c.addBreaks()
 else:
-    c.add("While ISP2 does honor %s classes of markings they have decided to not do anythings with the markings on a per hop basis, consider yourself lucky?" % NUMBER_OF_CORE_QOS)
+    c.add("While ISP2 does honor %s classes of markings they have decided to not do anythings with the markings on a per hop basis, consider yourself lucky?" % ISP2_NUMBER_OF_CORE_QOS)
     c.addBreaks()
 
-ConfigGenerator.section = 2
-ConfigGenerator.task = None
-ConfigGenerator.task = 1
+#ConfigGenerator.section = 2
+#ConfigGenerator.task = 1
 
 c.addHeader("Service Provider based services")
 c.add("This section is worth 26% of the total points")
