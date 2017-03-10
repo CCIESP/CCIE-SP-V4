@@ -7,7 +7,7 @@ The VIRL topology will be uploaded to this GIT upon completion of the program to
 
 Not all lab tasks will be covered in this program but will be considered for furtuer additions or future programs using a seperate topology.
 
-The main upcoming goals of this project are:
+The main goals of this project are:
 
 1. finish all sections of the blueprint and add rich tasks for a real 5.5-6 hour mock lab.
 2. complete a few of the mock labs and edit tasks where needed to make them cleaner (or if i find V image limitations).
