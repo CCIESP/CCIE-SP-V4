@@ -105,11 +105,10 @@ ISP2 = ["PE3", "PE4", "P3", "P4", "ASBR2"]
 ISP1_PE = ["PE1", "PE2"]
 ISP1_P = ["P1", "P2"]
 ISP1_ASBR = ["ASBR1"]
-ISP1_CE = ["CE1", "CE2", "CE3", "CE4"]
 ISP2_PE = ["PE3", "PE4"]
 ISP2_P = ["P3", "P4"]
 ISP2_ASBR = ["ASBR2"]
-ISP2_CE = ["CE5", "CE6", "CE7", "CE8"]
+
 #list all IGP types the SP may use
 IGP1 = ["IS-IS", "OSPF"]
 IGP2 = ["IS-IS", "OSPF"]
@@ -117,7 +116,6 @@ auth_type = ["interface", "area"]
 ospf_adv_type = ["specific network statements", "the interface command", "a very broad network statement"]
 
 #PE-CE peering protocols
-PE_CE_PROT = ["OSPF", "RIPv2", "EIGRP", "STATIC", "BGP"]
 
 c.add("Welcome to the CCIE-SPv4 MOCK LAB random task generator!")
 c.add("Please use these tasks with the prebuilt two ISP topology.")
@@ -424,6 +422,405 @@ else:
 c.addHeader("Service Provider based services")
 c.add("This section is worth 26% of the total points")
 c.addHrule()
-c.addTask("Test section")
+L2VPN = ["ETREE", "ELAN", "ELINE"]
+ISP1_L2VPN = random.choice(L2VPN)
+ISP2_L2VPN = random.choice(L2VPN)
+ELINE = ["VPWS", "ELINE", "PSEUDOWIRE"]
+ELAN = ["VPLS", "ELAN"]
+PL_VS_VPL = ["native", "tagged"]
+PL = ["native", "802.3", "EPL"]
+VPL = ["tagged", "802.1q", "EVPL"]
+SIGNAL = ["BGP", "LDP"]
+MARTINI = ["Martini", "LDP"]
+KOMPELLA = ["Kompella", "BGP"]
+L2_ISP1_CE = ["CE1", "CE2", "CE3", "CE4"]
+L2_ISP2_CE = ["CE5", "CE6", "CE7", "CE8"]
+
+#ISP1 L2VPN SERVICES
+c.add("ISP1 L2VPN services")
+if ISP1_L2VPN == "ELINE":
+    #ELINE SERVICES
+    ELINE_CE1 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ELINE_CE1)
+    ELINE_CE2 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ELINE_CE2)
+    c.addTask("Create a %s service from %s to %s. On each CE use the lowest number interface." % (random.choice(ELINE), ELINE_CE1, ELINE_CE2))
+    if random.choice(PL_VS_VPL) == "tagged":
+        c.addTask("Use a %s handoff with the vlan number of %s." % (random.choice(VPL), random.randint(1000, 2000)))
+    else:
+        c.addTask("Use a %s ethernet handoff." % random.choice(PL))
+elif ISP1_L2VPN == "ELAN":
+    #ELAN SERVICES
+    ELAN_NODE = random.randint(2, 4)
+    ELAN_CE1 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ELAN_CE1)
+    ELAN_CE2 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ELAN_CE2)
+    ELAN_CE3 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ELAN_CE3)
+    ELAN_CE4 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ELAN_CE4)
+    if ELAN_NODE == 2:
+        c.addTask("Create a %s service from %s to %s. On each CE use the lowest number interface." % (random.choice(ELAN), ELAN_CE1, ELAN_CE2))
+    elif ELAN_NODE == 3:
+        c.addTask("Create a %s service between %s, %s and %s. On each CE use the lowest number interface." % (random.choice(ELAN), ELAN_CE1, ELAN_CE2, ELAN_CE3))
+    else:
+        c.addTask("Create a %s service between %s, %s, %s and %s. On each CE use the lowest number interface." % (random.choice(ELAN), ELAN_CE1, ELAN_CE2, ELAN_CE3, ELAN_CE4))
+    if random.choice(PL_VS_VPL) == "tagged":
+        c.addTask("Use a %s handoff with the vlan number of %s." % (random.choice(VPL), random.randint(1000, 2000)))
+    else:
+        c.addTask("Use a %s ethernet handoff." % random.choice(PL))
+    if random.randint(0,1) == 0:
+        c.addTask("Use manual %s style neighbor configuration and %s neighbor label signalling." % (random.choice(MARTINI), random.choice(SIGNAL)))
+    else:
+        ELAN_SIGNAL = random.choice(SIGNAL)
+        c.addTask("Use %s auto neighbor discovery and %s label signalling." % (random.choice(KOMPELLA), ELAN_SIGNAL))
+        if ELAN_SIGNAL == "BGP":
+            c.addTask("Use the following RT schema of CE1CE2:CE1CE2 for AC discovery, an example for CE1 to CE3 would be 13:13.")
+else:
+    #ETREE SERVICES
+    ETREE = []
+    ETREE_CE1 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ETREE_CE1)
+    ETREE.append(ETREE_CE1)
+    ETREE_CE2 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ETREE_CE2)
+    ETREE.append(ETREE_CE2)
+    ETREE_CE3 = random.choice(L2_ISP1_CE)
+    L2_ISP1_CE.remove(ETREE_CE3)
+    ETREE.append(ETREE_CE3)
+    ETREE_HUB = random.choice(ETREE)
+    c.addTask("Create an E-TREE for the following three nodes %s %s %s.  The root of the tree is %s.  The spokes should not be able to talk directly." % (ETREE_CE1, ETREE_CE2, ETREE_CE3, ETREE_HUB))
+    c.addTask("On each CE use the lowest number interface")
+    if random.choice(PL_VS_VPL) == "tagged":
+        c.addTask("Use a %s handoff with the vlan number of %s." % (random.choice(VPL), random.randint(1000, 2000)))
+    else:
+        c.addTask("Use a %s ethernet handoff." % random.choice(PL))
+    if random.randint(0,1) == 0:
+        c.addTask("Use manual %s style neighbor configuration and %s neighbor label signalling." % (random.choice(MARTINI), random.choice(SIGNAL)))
+    else:
+        ETREE_SIGNAL = random.choice(SIGNAL)
+        c.addTask("Use %s auto neighbor discovery and %s label signalling." % (random.choice(KOMPELLA), ETREE_SIGNAL))
+        if ETREE_SIGNAL == "BGP":
+            c.addTask("Use the following RT schema of CE1CE2:CE1CE2 for AC discovery, an example for CE1 to CE3 would be 13:13.")
+
+if random.randint(0,1) == 0:
+    c.addTask("Do not enable control-word on the service.")
+else:
+    c.addTask("Configure control-word on the service.")
+if random.randint(0,1) == 0:
+    c.addTask("Change the MTU of the service to %s." % random.randrange(2000, 9000, 1000))
+else:
+    c.addTask("Keep the MTU of the service to the default of 1500.")
+#this is where other PW based services will be added such as FAT in the future.
+
+c.addBreaks()
+#ISP2 L2VPN SERVICES
+c.add("ISP2 L2VPN services")
+if ISP2_L2VPN == "ELINE":
+    #ELINE SERVICES
+    ELINE_CE1 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ELINE_CE1)
+    ELINE_CE2 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ELINE_CE2)
+    c.addTask("Create a %s service from %s to %s. On each CE use the lowest number interface." % (random.choice(ELINE), ELINE_CE1, ELINE_CE2))
+    if random.choice(PL_VS_VPL) == "tagged":
+        c.addTask("Use a %s handoff with the vlan number of %s." % (random.choice(VPL), random.randint(1000, 2000)))
+    else:
+        c.addTask("Use a %s ethernet handoff." % random.choice(PL))
+elif ISP2_L2VPN == "ELAN":
+    ELAN_NODE = random.randint(2, 4)
+    ELAN_CE1 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ELAN_CE1)
+    ELAN_CE2 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ELAN_CE2)
+    ELAN_CE3 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ELAN_CE3)
+    ELAN_CE4 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ELAN_CE4)
+    if ELAN_NODE == 2:
+        c.addTask("Create a %s service from %s to %s. On each CE use the lowest number interface." % (random.choice(ELAN), ELAN_CE1, ELAN_CE2))
+    elif ELAN_NODE == 3:
+        c.addTask("Create a %s service between %s, %s and %s. On each CE use the lowest number interface." % (random.choice(ELAN), ELAN_CE1, ELAN_CE2, ELAN_CE3))
+    else:
+        c.addTask("Create a %s service between %s, %s, %s and %s. On each CE use the lowest number interface." % (random.choice(ELAN), ELAN_CE1, ELAN_CE2, ELAN_CE3, ELAN_CE4))
+    if random.choice(PL_VS_VPL) == "tagged":
+        c.addTask("Use a %s handoff with the vlan number of %s." % (random.choice(VPL), random.randint(1000, 2000)))
+    else:
+        c.addTask("Use a %s ethernet handoff." % random.choice(PL))
+    if random.randint(0,1) == 0:
+        c.addTask("Use manual %s style neighbor configuration and %s neighbor label signalling." % (random.choice(MARTINI), random.choice(SIGNAL)))
+    else:
+        ELAN_SIGNAL = random.choice(SIGNAL)
+        c.addTask("Use %s auto neighbor discovery and %s label signalling." % (random.choice(KOMPELLA), ELAN_SIGNAL))
+        if ELAN_SIGNAL == "BGP":
+            c.addTask("Use the following RT schema of CE1CE2:CE1CE2 for AC discovery, an example for CE1 to CE3 would be 13:13.")
+else:
+    #ETREE SERVICES
+    ETREE = []
+    ETREE_CE1 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ETREE_CE1)
+    ETREE.append(ETREE_CE1)
+    ETREE_CE2 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ETREE_CE2)
+    ETREE.append(ETREE_CE2)
+    ETREE_CE3 = random.choice(L2_ISP2_CE)
+    L2_ISP2_CE.remove(ETREE_CE3)
+    ETREE.append(ETREE_CE3)
+    ETREE_HUB = random.choice(ETREE)
+    c.addTask("Create an E-TREE for the following three nodes %s %s %s.  The root of the tree is %s.  The spokes should not be able to talk directly." % (ETREE_CE1, ETREE_CE2, ETREE_CE3, ETREE_HUB))
+    c.addTask("On each CE use the lowest number interface")
+    if random.choice(PL_VS_VPL) == "tagged":
+        c.addTask("Use a %s handoff with the vlan number of %s." % (random.choice(VPL), random.randint(1000, 2000)))
+    else:
+        c.addTask("Use a %s ethernet handoff." % random.choice(PL))
+    if random.randint(0,1) == 0:
+        c.addTask("Use manual %s style neighbor configuration and %s neighbor label signalling." % (random.choice(MARTINI), random.choice(SIGNAL)))
+    else:
+        ETREE_SIGNAL = random.choice(SIGNAL)
+        c.addTask("Use %s auto neighbor discovery and %s label signalling." % (random.choice(KOMPELLA), ETREE_SIGNAL))
+        if ETREE_SIGNAL == "BGP":
+            c.addTask("Use the following RT schema of CE1CE2:CE1CE2 for AC discovery, an example for CE1 to CE3 would be 13:13.")
+
+if random.randint(0,1) == 0:
+    c.addTask("Do not enable control-word on the service.")
+else:
+    c.addTask("Configure control-word on the service.")
+if random.randint(0,1) == 0:
+    c.addTask("Change the MTU of the service to %s." % random.randrange(2000, 9000, 1000))
+else:
+    c.addTask("Keep the MTU of the service to the default of 1500.")
+#this is where other PW based services will be added such as FAT in the future.
+
+c.addBreaks()
+
+L3_ISP1_CE = ["CE1", "CE2", "CE3", "CE4"]
+L3_ISP2_CE = ["CE5", "CE6", "CE7", "CE8"]
+PE_CE_PROT = ["OSPF", "RIPv2", "EIGRP", "STATIC", "BGP"]
+#BELOW IS A TEST VAR TO FORCE AND IGP
+#PE_CE_PROT = ["EIGRP"]
+#ISP1 L3VPN SERVICES
+
+ISP1_L3VPN_NETWORK = random.randint(1, 4)
+ISP1_L3VPN_CE1 = random.choice(L3_ISP1_CE)
+L3_ISP1_CE.remove(ISP1_L3VPN_CE1)
+ISP1_L3VPN_CE2 = random.choice(L3_ISP1_CE)
+L3_ISP1_CE.remove(ISP1_L3VPN_CE2)
+ISP1_L3VPN_CE3 = random.choice(L3_ISP1_CE)
+L3_ISP1_CE.remove(ISP1_L3VPN_CE3)
+ISP1_L3VPN_CE4 = random.choice(L3_ISP1_CE)
+L3_ISP1_CE.remove(ISP1_L3VPN_CE4)
+c.add("ISP1 L3VPN services")
+if ISP1_L3VPN_NETWORK == 2:
+    c.addTask("ISP1 currently has an L3VPN for the following nodes: %s %s." % (ISP1_L3VPN_CE1, ISP1_L3VPN_CE2))
+    c.addTask("THE RD and RT methodology is ISP_ASN:CE#CE#, an example for an L3VPN using CE2 and CE3 is 1:23")
+    c.addTask("The VRF name on each PE for this L3VPN should be: ISP1-CUST-1.")
+    c.addTask("Each PE will exchange routes with the CE on its highest number interface.")
+    c.addBreaks()
+elif ISP1_L3VPN_NETWORK == 3:
+    c.addTask("ISP1 currently has an L3VPN for the following nodes: %s %s %s." % (ISP1_L3VPN_CE1, ISP1_L3VPN_CE2, ISP1_L3VPN_CE3))
+    c.addTask("THE RD and RT methodology is ISP_ASN:CE#CE#, an example for an L3VPN using CE2 and CE3 is 1:23")
+    c.addTask("The VRF name on each PE for this L3VPN should be: ISP1-CUST-1.")
+    c.addTask("Each PE will exchange routes with the CE on its highest number interface.")
+    c.addBreaks()
+else:
+    c.addTask("ISP1 currently has an L3VPN for the following nodes: %s %s %s %s." % (ISP1_L3VPN_CE1, ISP1_L3VPN_CE2, ISP1_L3VPN_CE3, ISP1_L3VPN_CE4))
+    c.addTask("THE RD and RT methodology is ISP_ASN:CE#CE#, an example for an L3VPN using CE2 and CE3 is 1:23")
+    c.addTask("The VRF name on each PE for this L3VPN should be: ISP1-CUST-1.")
+    c.addTask("Each PE will exchange routes with the CE on its highest number interface.")
+    c.addBreaks()
+c.add("ISP1 L3VPN PE-CE routing")
+ISP1_L3VPN_IGP = random.choice(PE_CE_PROT)
+if ISP1_L3VPN_IGP == "STATIC":
+    c.addTask("Each PE and CE will peer via static routes, redistribute accordingly on each PE.")
+elif ISP1_L3VPN_IGP == "RIPv2":
+    c.addTask("Each PE and CE will peer via RIPv2.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Ensure the metric passes transparently through the SP network.")
+    else:
+        c.addTask("Redistribute RIP on the PE with a metric of %s." % random.randint(3, 10))
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not enable authentication with the customer.")
+    else:
+        c.addTask("Enable authentication with the customer using the password 'cisco'.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Provide the customer a default route.")
+    else:
+        c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+elif ISP1_L3VPN_IGP == "EIGRP":
+    c.addTask("Each PE and CE will peer via EIGRP using ASN %s." % random.randint(1, 65535))
+    if random.randint(0, 1) == 1:
+        c.addTask("Ensure the metric passes transparently through the SP network.")
+    else:
+        c.addTask("Redistribute EIGRP on the PE with a metric of %sM bandwidth, %s msec delay, 100 percent reliability, 1 percent load and 1500 MTU." % (random.randrange(100, 1000, 100), random.randrange(100, 1000, 100)))
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not enable authentication with the customer.")
+    else:
+        c.addTask("Enable authentication with the customer using the password 'cisco'.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Provide the customer a default route.")
+    else:
+        c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+elif ISP1_L3VPN_IGP == "OSPF":
+    OSPF_METRIC_TYPE = ("E1","E2")
+    c.addTask("Each PE and CE will peer via OSPF using PID %s." % random.randint(1, 65535))
+    if random.randint(0, 1) == 1:
+        c.addTask("Ensure the metric passes transparently through the SP network.")
+    else:
+        c.addTask("Redistribute OSPF on the PE with a metric of %s and type of %s." % (random.randrange(100, 1000, 100), random.choice(OSPF_METRIC_TYPE)))
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not enable authentication with the customer.")
+    else:
+        c.addTask("Enable authentication with the customer using the password 'cisco'.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Provide the customer a default route type %s." % random.choice(OSPF_METRIC_TYPE))
+    else:
+        c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+else:
+    c.addTask("eBGP will be used as the PE-CE peering protocol.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Each CE will use the two-byte ASN %s to peer with the PE." % random.randint(64512, 65535))
+    else:
+        c.addTask("Each CE will use the four-byte ASN %s:%s to peer with the PE." % (random.randint(64512, 65535), random.randint(64512, 65535)))
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not accept BGP community values from the CE.")
+    else:
+        c.addTask("Accept BGP community values from the CE.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not enable authentication with the customer.")
+    else:
+        c.addTask("Enable authentication with the customer using the password 'cisco'.")
+    if random.randint(0, 1) == 1:
+        c.addTask("The CE will use allowas-in to allow prefixes from other CE's into its BGP RIB.")
+    else:
+        c.addTask("The PE will use as-override to ensure the CE learns prefixes from other CE's.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Only accept %s BGP prefixes from the customer, warn at %s percent and once the threshold is passed shutdown the BGP session." % (random.randrange(500, 1000, 100), random.randrange(50, 100, 10)))
+        c.addTask("Have the BGP session automatically restart after %s minutes." % random.randint(3, 10))
+    else:
+        c.addTask("Only accept %s BGP prefixes from the customer, warn at %s percent and do not shut down the session!" % (random.randrange(500, 1000, 100), random.randrange(50, 100, 10)))
+
+if random.randint(0,1) == 0:
+    c.addTask("Limit the amount of prefixes in the VRF routing table to %s." % random.randrange(1000, 2000, 100))
+else:
+    CE_LABEL = ("per-prefix(default)", "per-vrf", "per-CE")
+    c.add("This is an untested task and will need to be verified on IOS-XE and IOS-XR.")
+    c.addTask("Allocate MPLS labels %s." % random.choice(CE_LABEL))
+c.addBreaks()
+#ISP2 L3VPN SERVICES
+ISP2_L3VPN_NETWORK = random.randint(1, 4)
+ISP2_L3VPN_CE1 = random.choice(L3_ISP2_CE)
+L3_ISP2_CE.remove(ISP2_L3VPN_CE1)
+ISP2_L3VPN_CE2 = random.choice(L3_ISP2_CE)
+L3_ISP2_CE.remove(ISP2_L3VPN_CE2)
+ISP2_L3VPN_CE3 = random.choice(L3_ISP2_CE)
+L3_ISP2_CE.remove(ISP2_L3VPN_CE3)
+ISP2_L3VPN_CE4 = random.choice(L3_ISP2_CE)
+L3_ISP2_CE.remove(ISP2_L3VPN_CE4)
+c.add("ISP2 L3VPN services")
+if ISP2_L3VPN_NETWORK == 2:
+    c.addTask("ISP2 currently has an L3VPN for the following nodes: %s %s." % (ISP2_L3VPN_CE1, ISP2_L3VPN_CE2))
+    c.addTask("THE RD and RT methodology is ISP_ASN:CE#CE#, an example for an L3VPN using CE5 and CE7 is 2:57")
+    c.addTask("The VRF name on each PE for this L3VPN should be: ISP2-CUST-1.")
+    c.addTask("Each PE will exchange routes with the CE on its highest number interface.")
+    c.addBreaks()
+elif ISP2_L3VPN_NETWORK == 3:
+    c.addTask("ISP2 currently has an L3VPN for the following nodes: %s %s %s." % (ISP2_L3VPN_CE1, ISP2_L3VPN_CE2, ISP2_L3VPN_CE3))
+    c.addTask("THE RD and RT methodology is ISP_ASN:CE#CE#, an example for an L3VPN using CE5 and CE7 is 2:57")
+    c.addTask("The VRF name on each PE for this L3VPN should be: ISP2-CUST-1.")
+    c.addTask("Each PE will exchange routes with the CE on its highest number interface.")
+    c.addBreaks()
+else:
+    c.addTask("ISP2 currently has an L3VPN for the following nodes: %s %s %s %s." % (ISP2_L3VPN_CE1, ISP2_L3VPN_CE2, ISP2_L3VPN_CE3, ISP2_L3VPN_CE4))
+    c.addTask("THE RD and RT methodology is ISP_ASN:CE#CE#, an example for an L3VPN using CE5 and CE7 is 2:57")
+    c.addTask("The VRF name on each PE for this L3VPN should be: ISP2-CUST-1.")
+    c.addTask("Each PE will exchange routes with the CE on its highest number interface.")
+    c.addBreaks()
+c.add("ISP2 L3VPN PE-CE routing")
+ISP2_L3VPN_IGP = random.choice(PE_CE_PROT)
+if ISP2_L3VPN_IGP == "STATIC":
+    c.addTask("Each PE and CE will peer via static routes, redistribute accordingly on each PE.")
+elif ISP2_L3VPN_IGP == "RIPv2":
+    c.addTask("Each PE and CE will peer via RIPv2.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Ensure the metric passes transparently through the SP network.")
+    else:
+        c.addTask("Redistribute RIP on the PE with a metric of %s." % random.randint(3, 10))
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not enable authentication with the customer.")
+    else:
+        c.addTask("Enable authentication with the customer using the password 'cisco'.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Provide the customer a default route.")
+    else:
+        c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+elif ISP2_L3VPN_IGP == "EIGRP":
+    c.addTask("Each PE and CE will peer via EIGRP using ASN %s." % random.randint(1, 65535))
+    if random.randint(0, 1) == 1:
+        c.addTask("Ensure the metric passes transparently through the SP network.")
+    else:
+        c.addTask("Redistribute EIGRP on the PE with a metric of %sM bandwidth, %s msec delay, 100 percent reliability, 1 percent load and 1500 MTU." % (random.randrange(100, 1000, 100), random.randrange(100, 1000, 100)))
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not enable authentication with the customer.")
+    else:
+        c.addTask("Enable authentication with the customer using the password 'cisco'.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Provide the customer a default route.")
+    else:
+        c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+elif ISP2_L3VPN_IGP == "OSPF":
+    OSPF_METRIC_TYPE = ("E1","E2")
+    c.addTask("Each PE and CE will peer via OSPF using PID %s." % random.randint(1, 65535))
+    if random.randint(0, 1) == 1:
+        c.addTask("Ensure the metric passes transparently through the SP network.")
+    else:
+        c.addTask("Redistribute OSPF on the PE with a metric of %s and type of %s." % (random.randrange(100, 1000, 100), random.choice(OSPF_METRIC_TYPE)))
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not enable authentication with the customer.")
+    else:
+        c.addTask("Enable authentication with the customer using the password 'cisco'.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Provide the customer a default route type %s." % random.choice(OSPF_METRIC_TYPE))
+    else:
+        c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+else:
+    c.addTask("eBGP will be used as the PE-CE peering protocol.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Each CE will use the two-byte ASN %s to peer with the PE." % random.randint(64512, 65535))
+    else:
+        c.addTask("Each CE will use the four-byte ASN %s:%s to peer with the PE." % (random.randint(64512, 65535), random.randint(64512, 65535)))
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not accept BGP community values from the CE.")
+    else:
+        c.addTask("Accept BGP community values from the CE.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Do not enable authentication with the customer.")
+    else:
+        c.addTask("Enable authentication with the customer using the password 'cisco'.")
+    if random.randint(0, 1) == 1:
+        c.addTask("The CE will use allowas-in to allow prefixes from other CE's into its BGP RIB.")
+    else:
+        c.addTask("The PE will use as-override to ensure the CE learns prefixes from other CE's.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Only accept %s BGP prefixes from the customer, warn at %s percent and once the threshold is passed shutdown the BGP session." % (random.randrange(500, 1000, 100), random.randrange(50, 100, 10)))
+        c.addTask("Have the BGP session automatically restart after %s minutes." % random.randint(3, 10))
+    else:
+        c.addTask("Only accept %s BGP prefixes from the customer, warn at %s percent and do not shut down the session!" % (random.randrange(500, 1000, 100), random.randrange(50, 100, 10)))
+
+if random.randint(0,1) == 0:
+    c.addTask("Limit the amount of prefixes in the VRF routing table to %s." % random.randrange(1000, 2000, 100))
+else:
+    CE_LABEL = ("per-prefix(default)", "per-vrf", "per-CE")
+    c.add("This is an untested task and will need to be verified on IOS-XE and IOS-XR.")
+    c.addTask("Allocate MPLS labels %s." % random.choice(CE_LABEL))
+c.addBreaks()
+
+#next up, Central services L3VPN and DIA using direct PE and L2-PE/L3-PE setup.
+#QoS
+#IGP tweaks on L3VPN PE-CE protocols (timers? etc?)
+#interAS policies
+#VIRL base configs
+#peering with the "internet" and peering RPL policies.
+
 
 c.output()
