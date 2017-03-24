@@ -3,6 +3,8 @@ CCIE-SP-V4 random lab generator
 
 The goal is this project is to create a random mock CCIE-SP configuration section based on the CCIE-SP blueprint (https://learningcontent.cisco.com/cln_storage/text/cln/marketing/exam-topics/400-201_ccieSP.pdf) each time the user runs the program.
 
+*NOTE* The Last day for a v4.0 lab attempt is June 20th 2017, the new blueprint is here and I will be adding the tasks associated with this blueprint. (https://learningcontent.cisco.com/cln_storage/text/cln/marketing/exam-topics/400-201-ccie-sp-unified.pdf)
+
 The VIRL topology will be uploaded to this GIT upon completion of the program to allow the user to load the VIRL topology, randomize the lab and then begin studying.
 
 Not all lab tasks will be covered in this program but will be considered for furtuer additions or future programs using a seperate topology.
