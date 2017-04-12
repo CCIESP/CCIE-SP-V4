@@ -131,6 +131,8 @@ ISP1_IGP = random.choice(IGP1)
 ISP2_IGP = random.choice(IGP2)
 
 #EVERYTHING IN THIS SECTION WILL NEED TO BE VERIFIED IN TERMS OF TIMERS AND AUTH TYPES AS THIS IS A ROUGH DRAFT, EXPECT ERRORS!
+#NEEDS TO ADD ISIS LSP-PASSWORD INTO THIS AS WELL!
+#NEED TO ADD THE USE OF KEYCHAIN VS INTERFACE COMMAND!
 #ISP1's IGP
 c.add("ISP1's IGP")
 c.addTask("Configure ISP 1 to use the following IGP: %s" % ISP1_IGP)
@@ -143,7 +145,7 @@ if ISP1_IGP == "IS-IS":
         c.addTask("Configure the IS-IS hello timer interval to be %s sec." % random.randrange(5 ,30, 5))
         c.addBreaks()
     else:
-        c.addTask("Configure BFD for IS-IS with a interval/min_rx of %s and a multiplier of %s." % (random.randrange(250, 1000, 250), random.randint (3, 5)))
+        c.addTask("Configure BFD for IS-IS with a interval/min_rx of %s and a multiplier of %s. Use normal timers on XRv devices." % (random.randrange(250, 1000, 250), random.randint (3, 5)))
         c.addBreaks()
 elif ISP1_IGP == "OSPF":
     c.addTask("Use the OSPF PID of 1.")
@@ -153,7 +155,7 @@ elif ISP1_IGP == "OSPF":
         c.addTask("Configure OSPF hello timers of %s seconds and dead timers of % s seconds." % (random.randint(1, 10), random.randrange(20, 60, 10)))
         c.addBreaks()
     else:
-        c.addTask("Configure BFD for OSPF with a interval/min_rx of %s and a multiplier of %s." % (random.randrange(250, 1000, 250), random.randint (3, 5)))
+        c.addTask("Configure BFD for OSPF with a interval/min_rx of %s and a multiplier of %s. Use normal timers on XRv devices." % (random.randrange(250, 1000, 250), random.randint (3, 5)))
         c.addBreaks()
 else:
     c.addTask("ERROR IN ISP1 IGP SELECTION!.")
@@ -170,7 +172,7 @@ if ISP2_IGP == "IS-IS":
         c.addTask("Configure the IS-IS hello timer interval to be %s sec." % (random.randrange(5 ,30, 5)))
         c.addBreaks()
     else:
-        c.addTask("Configure BFD for IS-IS with a interval/min_rx of %s and a multiplier of %s." % (random.randrange(250, 1000, 250), random.randint (3, 5)))
+        c.addTask("Configure BFD for IS-IS with a interval/min_rx of %s and a multiplier of %s. Use normal timers on XRv devices." % (random.randrange(250, 1000, 250), random.randint (3, 5)))
         c.addBreaks()
 elif ISP2_IGP == "OSPF":
     c.addTask("Use the OSPF PID of 2.")
@@ -180,7 +182,7 @@ elif ISP2_IGP == "OSPF":
         c.addTask("Configure OSPF hello timers of %s seconds and dead timers of % s seconds." % (random.randint(1, 10), random.randrange(20, 60, 10)))
         c.addBreaks()
     else:
-        c.addTask("Configure BFD for OSPF with a interval/min_rx of %s and a multiplier of %s." % (random.randrange(250, 1000, 250), random.randint (3, 5)))
+        c.addTask("Configure BFD for OSPF with a interval/min_rx of %s and a multiplier of %s. Use normal timers on XRv devices." % (random.randrange(250, 1000, 250), random.randint (3, 5)))
         c.addBreaks()
 else:
     c.addTask("ERROR IN ISP2 IGP SELECTION!")
@@ -304,6 +306,8 @@ c.addTask("Configure the devices in ISP2 to do the following with an TTL: %s." %
 c.addBreaks()
 
 #ISP1's Multicast
+#http://www.cisco.com/c/en/us/support/docs/multiprotocol-label-switching-mpls/multiprotocol-label-switching-vpns-mpls-vpns/118983-configure-mpls-00.html
+#will need to add all 27 profiles!
 c.add("Multicast for ISP1 to be added soon")
 c.addBreaks()
 
@@ -594,6 +598,9 @@ else:
 
 c.addBreaks()
 
+
+
+
 L3_ISP1_CE = ["CE1", "CE2", "CE3", "CE4"]
 L3_ISP2_CE = ["CE5", "CE6", "CE7", "CE8"]
 PE_CE_PROT = ["OSPF", "RIPv2", "EIGRP", "STATIC", "BGP"]
@@ -815,8 +822,10 @@ else:
     c.addTask("Allocate MPLS labels %s." % random.choice(CE_LABEL))
 c.addBreaks()
 
+
+# go back, add a place holder for segment routing,  6pe, 6vpe, v6 PE-CE protoocls and then overlays such as L2TPN, DMVPN, etc.
 #next up, Central services L3VPN and DIA using direct PE and L2-PE/L3-PE setup.
-#QoS
+#Edge QoS
 #IGP tweaks on L3VPN PE-CE protocols (timers? etc?)
 #interAS policies
 #VIRL base configs
