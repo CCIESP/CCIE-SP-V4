@@ -11,9 +11,9 @@ Not all lab tasks will be covered in this program but will be considered for fur
 
 The main goals of this project are:
 
-1. finish all sections of the blueprint and add rich tasks for a real 5.5-6 hour mock lab.
+1. finish all sections of the blueprint and add rich tasks for a real 4.5 hour mock lab (assume the worst).
 2. complete a few of the mock labs and edit tasks where needed to make them cleaner (or if i find V image limitations).
-3. trim the fat and create a 2-3 hour "core" random lab where the tasks will be less of nature but more focused around speed and core knowledge.
+3. trim the fat and create a 1.5-2 hour "core" random lab where the tasks will be less of nature but more focused around speed and core knowledge.
 4. some of the completed labs will be saved completed and then have errors injected with maybe 3-5 "tickets" for a mock tshoot section.
 
 This material is not sponsored or endorsed by Cisco Systems, Inc. Cisco, Cisco Systems, CCIE and the CCIE Logo are trademarks of Cisco Systems, Inc. and its affiliates.
