@@ -117,14 +117,14 @@ ospf_adv_type = ["specific network statements", "the interface command", "a very
 
 #PE-CE peering protocols
 
-c.add("Welcome to the CCIE-SPv4 MOCK LAB random task generator!")
+c.add("Welcome to the CCIE-SPv4.1 MOCK LAB random task generator!")
 c.add("Please use these tasks with the prebuilt two ISP topology.")
-c.add("As with the real lab you only have 5 hours to complete these tasks.")
+c.add("As with the real lab you only have 4.5 hours (assume the worst) to complete these tasks.")
 c.add("Your topology should be prebuilt and pre IP'ed (v4/v6).")
 c.add("Please stop and verify before you start your timer!")
 c.addBreaks()
 c.addSection("Core Routing")
-c.add("This section is worth 27% of the total points")
+c.add("This section is worth 30% of the total points")
 c.addHrule()
 
 ISP1_IGP = random.choice(IGP1)
@@ -319,6 +319,8 @@ c.addBreaks()
 CORE_QOS_CLASSES = ["Voice", "Video", "Business", "Critical", "Best Effort"]
 CORE_QOS_DECISION = ["QGROUP", "EXP", "NONE"]
 CORE_QOS_BEST_EFFORT = ["WRED", "Tail Drop", "CBWFQ remaining bandwidth"]
+ISP1_QOS = ''
+ISP2_QOS = ''
 
 ISP1_NUMBER_OF_CORE_QOS = random.randint(3,5)
 c.add("ISP1 Core QoS")
@@ -329,6 +331,7 @@ if random.choice(CORE_QOS_DECISION) == "EXP":
         c.addTask("ISP1 gives EXP5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(20, 40))
         c.addTask("ISP1 gives EXP2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP1_QOS = "EXP3"
         c.addBreaks()
     elif ISP1_NUMBER_OF_CORE_QOS == 4:
         c.add("ISP1 honors the following classes: Voice (EXP5), Video (EXP4), Business (EXP2) and Best Effort (EXP0).")
@@ -336,6 +339,7 @@ if random.choice(CORE_QOS_DECISION) == "EXP":
         c.addTask("ISP1 gives EXP4 CBWFQ treatment and a bandwidth guarantee of %s percent.." % random.randint(20, 40))
         c.addTask("ISP1 gives EXP2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP1_QOS = "EXP4"
         c.addBreaks()
     else:
         c.add("ISP1 honors the following classes: Voice (EXP5), Video (EXP4), Critical (EXP3), Business (EXP2) and Best Effort (EXP0).")
@@ -344,6 +348,7 @@ if random.choice(CORE_QOS_DECISION) == "EXP":
         c.addTask("ISP1 gives EXP3 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(10, 20))
         c.addTask("ISP1 gives EXP2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(10, 20))
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP1_QOS = "EXP5"
         c.addBreaks()
 elif random.choice(CORE_QOS_DECISION) == "QGROUP":
     if ISP1_NUMBER_OF_CORE_QOS == 3:
@@ -351,6 +356,7 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
         c.addTask("ISP1 gives QGroup5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(20, 40))
         c.addTask("ISP1 gives QGroup2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP1_QOS = "QGROUP3"
         c.addBreaks()
     elif ISP1_NUMBER_OF_CORE_QOS == 4:
         c.add("ISP1 honors the following classes: Voice (QGroup5), Video (QGroup4), Business (QGroup2) and Best Effort (QGroup0).")
@@ -358,6 +364,7 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
         c.addTask("ISP1 gives QGroup4 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 40))
         c.addTask("ISP1 gives QGroup2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP1_QOS = "QGROUP4"
         c.addBreaks()
     else:
         c.add("ISP1 honors the following classes: Voice (QGroup5), Video (QGroup4), Critical (QGroup3), Business (QGroup2) and Best Effort (QGroup0).")
@@ -366,9 +373,11 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
         c.addTask("ISP1 gives QGroup3 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(10, 20))
         c.addTask("ISP1 gives QGroup2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(10, 20))
         c.addTask("ISP1 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP1_QOS = "QGROUP5"
         c.addBreaks()
 else:
     c.add("While ISP1 does honor %s classes of markings they have decided to not do anythings with the markings on a per hop basis, consider yourself lucky?" % ISP1_NUMBER_OF_CORE_QOS)
+    ISP1_QOS = "NONE"
     c.addBreaks()
 
 #ISP2 Core QoS
@@ -381,6 +390,7 @@ if random.choice(CORE_QOS_DECISION) == "EXP":
         c.addTask("ISP2 gives EXP5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(20, 40))
         c.addTask("ISP2 gives EXP2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP2_QOS = "EXP3"
         c.addBreaks()
     elif ISP2_NUMBER_OF_CORE_QOS == 4:
         c.add("ISP2 honors the following classes: Voice (EXP5), Video (EXP4), Business (EXP2) and Best Effort (EXP0).")
@@ -388,6 +398,7 @@ if random.choice(CORE_QOS_DECISION) == "EXP":
         c.addTask("ISP2 gives EXP4 CBWFQ treatment and a bandwidth guarantee of %s percent.." % random.randint(20, 40))
         c.addTask("ISP2 gives EXP2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP2_QOS = "EXP4"
         c.addBreaks()
     else:
         c.add("ISP2 honors the following classes: Voice (EXP5), Video (EXP4), Critical (EXP3), Business (EXP2) and Best Effort (EXP0).")
@@ -396,6 +407,7 @@ if random.choice(CORE_QOS_DECISION) == "EXP":
         c.addTask("ISP2 gives EXP3 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(10, 20))
         c.addTask("ISP2 gives EXP2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(10, 20))
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP2_QOS = "EXP5"
         c.addBreaks()
 elif random.choice(CORE_QOS_DECISION) == "QGROUP":
     if ISP2_NUMBER_OF_CORE_QOS == 3:
@@ -403,6 +415,7 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
         c.addTask("ISP2 gives QGroup5 priority treatment in the LLQ and polices that rate to %s percent." % random.randint(20, 40))
         c.addTask("ISP2 gives QGroup2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP2_QOS = "QGROUP3"
         c.addBreaks()
     elif ISP2_NUMBER_OF_CORE_QOS == 4:
         c.add("ISP2 honors the following classes: Voice (QGroup5), Video (QGroup4), Business (QGroup2) and Best Effort (QGroup0).")
@@ -410,6 +423,7 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
         c.addTask("ISP2 gives QGroup4 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 40))
         c.addTask("ISP2 gives QGroup2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(20, 35))
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP2_QOS = "QGROUP4"
         c.addBreaks()
     else:
         c.add("ISP2 honors the following classes: Voice (QGroup5), Video (QGroup4), Critical (QGroup3), Business (QGroup2) and Best Effort (QGroup0).")
@@ -418,13 +432,15 @@ elif random.choice(CORE_QOS_DECISION) == "QGROUP":
         c.addTask("ISP2 gives QGroup3 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(10, 20))
         c.addTask("ISP2 gives QGroup2 CBWFQ treatment and a bandwidth guarantee of %s percent." % random.randint(10, 20))
         c.addTask("ISP2 protects the rest of the traffic in the Best Effort queue via %s." % random.choice(CORE_QOS_BEST_EFFORT))
+        ISP2_QOS = "QGROUP5"
         c.addBreaks()
 else:
     c.add("While ISP2 does honor %s classes of markings they have decided to not do anythings with the markings on a per hop basis, consider yourself lucky?" % ISP2_NUMBER_OF_CORE_QOS)
+    ISP2_QOS = "NONE"
     c.addBreaks()
 
-c.addHeader("Service Provider based services")
-c.add("This section is worth 26% of the total points")
+c.addHeader("Service Provider Architecture and services")
+c.add("This section is worth 22% of the total points")
 c.addHrule()
 L2VPN = ["ETREE", "ELAN", "ELINE"]
 ISP1_L2VPN = random.choice(L2VPN)
@@ -599,7 +615,9 @@ else:
 c.addBreaks()
 
 
-
+c.addHeader("Access and Aggregation")
+c.add("This section is worth 21% of the total points")
+c.addHrule()
 
 L3_ISP1_CE = ["CE1", "CE2", "CE3", "CE4"]
 L3_ISP2_CE = ["CE5", "CE6", "CE7", "CE8"]
@@ -670,6 +688,7 @@ elif ISP1_L3VPN_IGP == "EIGRP":
         c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
 elif ISP1_L3VPN_IGP == "OSPF":
     OSPF_METRIC_TYPE = ("E1","E2")
+    OSPF_ROUTE_TYPE = ("External", "Inter area", "Intra area")
     c.addTask("Each PE and CE will peer via OSPF using PID %s." % random.randint(1, 65535))
     if random.randint(0, 1) == 1:
         c.addTask("Ensure the metric passes transparently through the SP network.")
@@ -683,6 +702,7 @@ elif ISP1_L3VPN_IGP == "OSPF":
         c.addTask("Provide the customer a default route type %s." % random.choice(OSPF_METRIC_TYPE))
     else:
         c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+    c.addTask("The customer should see the routes from the other sites as %s routes." % random.choice(OSPF_ROUTE_TYPE))
 else:
     c.addTask("eBGP will be used as the PE-CE peering protocol.")
     if random.randint(0, 1) == 1:
@@ -714,6 +734,7 @@ else:
     c.add("This is an untested task and will need to be verified on IOS-XE and IOS-XR.")
     c.addTask("Allocate MPLS labels %s." % random.choice(CE_LABEL))
 c.addBreaks()
+
 #ISP2 L3VPN SERVICES
 ISP2_L3VPN_NETWORK = random.randint(1, 4)
 ISP2_L3VPN_CE1 = random.choice(L3_ISP2_CE)
@@ -777,6 +798,7 @@ elif ISP2_L3VPN_IGP == "EIGRP":
         c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
 elif ISP2_L3VPN_IGP == "OSPF":
     OSPF_METRIC_TYPE = ("E1","E2")
+    OSPF_ROUTE_TYPE = ("External", "Inter area", "Intra area")
     c.addTask("Each PE and CE will peer via OSPF using PID %s." % random.randint(1, 65535))
     if random.randint(0, 1) == 1:
         c.addTask("Ensure the metric passes transparently through the SP network.")
@@ -790,6 +812,7 @@ elif ISP2_L3VPN_IGP == "OSPF":
         c.addTask("Provide the customer a default route type %s." % random.choice(OSPF_METRIC_TYPE))
     else:
         c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+    c.addTask("The customer should see the routes from the other sites as %s routes." % random.choice(OSPF_ROUTE_TYPE))
 else:
     c.addTask("eBGP will be used as the PE-CE peering protocol.")
     if random.randint(0, 1) == 1:
@@ -822,14 +845,294 @@ else:
     c.addTask("Allocate MPLS labels %s." % random.choice(CE_LABEL))
 c.addBreaks()
 
+#internet/shared services, this section needs some work on the inbound/outbound but what?
+c.add("ISP1 Internet or Shared Services offerings.")
+if random.randint(0, 1) == 1:
+    c.addTask("ISP1 has purchased transit from an upstream provider (which is a VRF inside of CE1 conected to ASBR1) configure this BGP peering session in the global table.")
+    c.addTask("Configure an inbound policy to not allow any RFC 1918 addressing or prefixes longer than /24 into the network.")
+    c.addTask("Configure an outbound policy to strip all prefixes of their community values and add the community value of 1:1 as they exit.")
+    c.addTask("Lastly do not allow any of the internal core links or loopbacks out of the network to the provider.")
+    if random.randint(0, 1) == 1:
+        c.addTask("ISP1 sales would like a proof of concept that internet will work for L3VPN customers.  Based on how the Internet is configured above select a single L3VPN customer and configure them internet access.")
+        c.addBreaks()
+    else:
+        c.addTask("ISP1 would like to offer a shared services COLO, configure a vrf on PE2 named Services with RD/RT of 999:999.  Select a single L3VPN customer to try out this solution with.")
+        c.addBreaks()
+else:
+    c.addTask("ISP1 has purchased transit from an upstream provider (which is a VRF inside of CE1 conected to ASBR1) configure this BGP peering session in a VRF called Internet.")
+    c.addTask("Use the RD of 666:666 and RT imports and exports of 666:666.")
+    c.addTask("Configure an inbound policy to not allow any RFC 1918 addressing or prefixes longer than /24 into the network.")
+    c.addTask("Configure an outbound policy to strip all prefixes of their community values and add the community value of 1:1 as they exit.")
+    c.addTask("Lastly do not allow any of the internal core links or loopbacks out of the network to the provider.")
+    if random.randint(0, 1) == 1:
+        c.addTask("ISP1 sales would like a proof of concept that internet will work for L3VPN customers.  Based on how the Internet is configured above select a single L3VPN customer and configure them internet access.")
+        c.addBreaks()
+    else:
+        c.addTask("ISP1 would like to offer a shared services COLO, configure a vrf on PE2 named Services with RD/RT of 999:999.  Select a single L3VPN customer to try out this solution with.")
+        c.addBreaks()
 
-# go back, add a place holder for segment routing,  6pe, 6vpe, v6 PE-CE protoocls and then overlays such as L2TPN, DMVPN, etc.
-#next up, Central services L3VPN and DIA using direct PE and L2-PE/L3-PE setup.
-#Edge QoS
+c.add("ISP2 Internet or Shared Services offerings.")
+if random.randint(0, 1) == 1:
+    c.addTask("ISP2 has purchased transit from an upstream provider (which is a VRF inside of CE5 conected to ASBR2) configure this BGP peering session in the global table.")
+    c.addTask("Configure an inbound policy to not allow any RFC 1918 addressing or prefixes longer than /24 into the network.")
+    c.addTask("Configure an outbound policy to strip all prefixes of their community values and add the community value of 2:2 as they exit.")
+    c.addTask("Lastly do not allow any of the internal core links or loopbacks out of the network to the provider.")
+    if random.randint(0, 1) == 1:
+        c.addTask("ISP2 sales would like a proof of concept that internet will work for L3VPN customers.  Based on how the Internet is configured above select a single L3VPN customer and configure them internet access.")
+        c.addBreaks()
+    else:
+        c.addTask("ISP2 would like to offer a shared services COLO, configure a vrf on PE4 named Services with RD/RT of 999:999.  Select a single L3VPN customer to try out this solution with.")
+        c.addBreaks()
+else:
+    c.addTask("ISP2 has purchased transit from an upstream provider (which is a VRF inside of CE5 conected to ASBR2) configure this BGP peering session in a VRF called Internet.")
+    c.addTask("Use the RD of 999:999 and RT imports and exports of 999:999.")
+    c.addTask("Configure an inbound policy to not allow any RFC 1918 addressing or prefixes longer than /24 into the network.")
+    c.addTask("Configure an outbound policy to strip all prefixes of their community values and add the community value of 2:2 as they exit.")
+    c.addTask("Lastly do not allow any of the internal core links or loopbacks out of the network to the provider.")
+    if random.randint(0, 1) == 1:
+        c.addTask("ISP2 sales would like a proof of concept that internet will work for L3VPN customers.  Based on how the Internet is configured above select a single L3VPN customer and configure them internet access.")
+        c.addBreaks()
+    else:
+        c.addTask("ISP2 would like to offer a shared services COLO, configure a vrf on PE4 named Services with RD/RT of 999:999.  Select a single L3VPN customer to try out this solution with.")
+        c.addBreaks()
+
+# ISP1 6PE and 6VPE
+ISP_V6_TYPES = ("6PE", "6VPE")
+V6_ISP1_CE = ["CE1", "CE2", "CE3", "CE4"]
+PE_CE_PROT_V6 = ["OSPFV3", "RIPNG", "EIGRP", "STATIC", "BGP"]
+SIX_PE_TYPE = ("Full Table", "Default Route")
+ISP1_6VPE_CE1 = random.choice(V6_ISP1_CE)
+V6_ISP1_CE.remove(ISP1_6VPE_CE1)
+ISP1_6VPE_CE2 = random.choice(V6_ISP1_CE)
+c.add("ISP1 6PE or 6VPE.")
+if random.choice(ISP_V6_TYPES) == "6PE":
+    c.addTask("%s has requested to buy IPV6 DIA from ISP1, configure the Internet Edge router to peer IPV6 with the transit provider." % random.choice(V6_ISP1_CE))
+    c.addTask("Configure the ingress and egress filtering on the Internet Edge router as above.")
+    c.addTask("Peer with the CE via %s.  If an IGP feed them the %s." % (random.choice(PE_CE_PROT), random.choice(SIX_PE_TYPE)))
+    c.addBreaks()
+else:
+    c.addTask("Create an IPV6 L3VPN network between %s and %s." % (ISP1_6VPE_CE1, ISP1_6VPE_CE2))
+    ISP1_6VPE_IGP = random.choice(PE_CE_PROT_V6)
+    if ISP1_6VPE_IGP == "STATIC":
+        c.addTask("Each PE and CE will peer via static routes, redistribute accordingly on each PE.")
+        c.addBreaks()
+    elif ISP1_6VPE_IGP == "RIPNG":
+        c.addTask("Each PE and CE will peer via RIPNG.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Ensure the metric passes transparently through the SP network.")
+        else:
+            c.addTask("Redistribute RIP on the PE with a metric of %s." % random.randint(3, 10))
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not enable authentication with the customer.")
+        else:
+            c.addTask("Enable authentication with the customer using the password 'cisco'.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Provide the customer a default route.")
+        else:
+            c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+        c.addBreaks()
+    elif ISP1_6VPE_IGP == "EIGRP":
+        c.addTask("Each PE and CE will peer via EIGRP using ASN %s." % random.randint(1, 65535))
+        if random.randint(0, 1) == 1:
+            c.addTask("Ensure the metric passes transparently through the SP network.")
+        else:
+            c.addTask("Redistribute EIGRP on the PE with a metric of %sM bandwidth, %s msec delay, 100 percent reliability, 1 percent load and 1500 MTU." % (random.randrange(100, 1000, 100), random.randrange(100, 1000, 100)))
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not enable authentication with the customer.")
+        else:
+            c.addTask("Enable authentication with the customer using the password 'cisco'.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Provide the customer a default route.")
+        else:
+            c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+        c.addBreaks()
+    elif ISP1_6VPE_IGP == "OSPFV3":
+        OSPF_METRIC_TYPE = ("E1","E2")
+        OSPF_ROUTE_TYPE = ("External", "Inter area", "Intra area")
+        c.addTask("Each PE and CE will peer via OSPFv3 using PID %s." % random.randint(1, 65535))
+        if random.randint(0, 1) == 1:
+            c.addTask("Ensure the metric passes transparently through the SP network.")
+        else:
+            c.addTask("Redistribute OSPF on the PE with a metric of %s and type of %s." % (random.randrange(100, 1000, 100), random.choice(OSPF_METRIC_TYPE)))
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not enable authentication with the customer.")
+        else:
+            c.addTask("Enable authentication with the customer using the password 'cisco'.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Provide the customer a default route type %s." % random.choice(OSPF_METRIC_TYPE))
+        else:
+            c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+        c.addTask("The customer should see the routes from the other sites as %s routes." % random.choice(OSPF_ROUTE_TYPE))
+        c.addBreaks()
+    else:
+        c.addTask("eBGP will be used as the PE-CE peering protocol.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Each CE will use the two-byte ASN %s to peer with the PE." % random.randint(64512, 65535))
+        else:
+            c.addTask("Each CE will use the four-byte ASN %s:%s to peer with the PE." % (random.randint(64512, 65535), random.randint(64512, 65535)))
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not accept BGP community values from the CE.")
+        else:
+            c.addTask("Accept BGP community values from the CE.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not enable authentication with the customer.")
+        else:
+            c.addTask("Enable authentication with the customer using the password 'cisco'.")
+        if random.randint(0, 1) == 1:
+            c.addTask("The CE will use allowas-in to allow prefixes from other CE's into its BGP RIB.")
+        else:
+            c.addTask("The PE will use as-override to ensure the CE learns prefixes from other CE's.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Only accept %s BGP prefixes from the customer, warn at %s percent and once the threshold is passed shutdown the BGP session." % (random.randrange(500, 1000, 100), random.randrange(50, 100, 10)))
+            c.addTask("Have the BGP session automatically restart after %s minutes." % random.randint(3, 10))
+        else:
+            c.addTask("Only accept %s BGP prefixes from the customer, warn at %s percent and do not shut down the session!" % (random.randrange(500, 1000, 100), random.randrange(50, 100, 10)))
+        c.addBreaks()
+
+#ISP2 6PE and 6VPE
+V6_ISP2_CE = ["CE5", "CE6", "CE7", "CE8"]
+ISP2_6VPE_CE1 = random.choice(V6_ISP2_CE)
+V6_ISP2_CE.remove(ISP2_6VPE_CE1)
+ISP2_6VPE_CE2 = random.choice(V6_ISP2_CE)
+c.add("ISP2 6PE or 6VPE.")
+if random.choice(ISP_V6_TYPES) == "6PE":
+    c.addTask("%s has requested to buy IPV6 DIA from ISP2, configure the Internet Edge router to peer IPV6 with the transit provider." % random.choice(V6_ISP1_CE))
+    c.addTask("Configure the ingress and egress filtering on the Internet Edge router as above.")
+    c.addTask("Peer with the CE via %s.  If an IGP feed them the %s." % (random.choice(PE_CE_PROT), random.choice(SIX_PE_TYPE)))
+    c.addBreaks()
+else:
+    c.addTask("Create an IPV6 L3VPN network between %s and %s." % (ISP2_6VPE_CE1, ISP2_6VPE_CE2))
+    ISP2_6VPE_IGP = random.choice(PE_CE_PROT_V6)
+    if ISP2_6VPE_IGP == "STATIC":
+        c.addTask("Each PE and CE will peer via static routes, redistribute accordingly on each PE.")
+        c.addBreaks()
+    elif ISP2_6VPE_IGP == "RIPNG":
+        c.addTask("Each PE and CE will peer via RIPNG.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Ensure the metric passes transparently through the SP network.")
+        else:
+            c.addTask("Redistribute RIP on the PE with a metric of %s." % random.randint(3, 10))
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not enable authentication with the customer.")
+        else:
+            c.addTask("Enable authentication with the customer using the password 'cisco'.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Provide the customer a default route.")
+        else:
+            c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+        c.addBreaks()
+    elif ISP2_6VPE_IGP == "EIGRP":
+        c.addTask("Each PE and CE will peer via EIGRP using ASN %s." % random.randint(1, 65535))
+        if random.randint(0, 1) == 1:
+            c.addTask("Ensure the metric passes transparently through the SP network.")
+        else:
+            c.addTask("Redistribute EIGRP on the PE with a metric of %sM bandwidth, %s msec delay, 100 percent reliability, 1 percent load and 1500 MTU." % (random.randrange(100, 1000, 100), random.randrange(100, 1000, 100)))
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not enable authentication with the customer.")
+        else:
+            c.addTask("Enable authentication with the customer using the password 'cisco'.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Provide the customer a default route.")
+        else:
+            c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+        c.addBreaks()
+    elif ISP2_6VPE_IGP == "OSPFV3":
+        OSPF_METRIC_TYPE = ("E1","E2")
+        OSPF_ROUTE_TYPE = ("External", "Inter area", "Intra area")
+        c.addTask("Each PE and CE will peer via OSPFv3 using PID %s." % random.randint(1, 65535))
+        if random.randint(0, 1) == 1:
+            c.addTask("Ensure the metric passes transparently through the SP network.")
+        else:
+            c.addTask("Redistribute OSPF on the PE with a metric of %s and type of %s." % (random.randrange(100, 1000, 100), random.choice(OSPF_METRIC_TYPE)))
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not enable authentication with the customer.")
+        else:
+            c.addTask("Enable authentication with the customer using the password 'cisco'.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Provide the customer a default route type %s." % random.choice(OSPF_METRIC_TYPE))
+        else:
+            c.addTask("Filter the prefixes on ingress to ensure the customer does not feed a default route into the L3VPN.")
+        c.addTask("The customer should see the routes from the other sites as %s routes." % random.choice(OSPF_ROUTE_TYPE))
+        c.addBreaks()
+    else:
+        c.addTask("eBGP will be used as the PE-CE peering protocol.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Each CE will use the two-byte ASN %s to peer with the PE." % random.randint(64512, 65535))
+        else:
+            c.addTask("Each CE will use the four-byte ASN %s:%s to peer with the PE." % (random.randint(64512, 65535), random.randint(64512, 65535)))
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not accept BGP community values from the CE.")
+        else:
+            c.addTask("Accept BGP community values from the CE.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Do not enable authentication with the customer.")
+        else:
+            c.addTask("Enable authentication with the customer using the password 'cisco'.")
+        if random.randint(0, 1) == 1:
+            c.addTask("The CE will use allowas-in to allow prefixes from other CE's into its BGP RIB.")
+        else:
+            c.addTask("The PE will use as-override to ensure the CE learns prefixes from other CE's.")
+        if random.randint(0, 1) == 1:
+            c.addTask("Only accept %s BGP prefixes from the customer, warn at %s percent and once the threshold is passed shutdown the BGP session." % (random.randrange(500, 1000, 100), random.randrange(50, 100, 10)))
+            c.addTask("Have the BGP session automatically restart after %s minutes." % random.randint(3, 10))
+        else:
+            c.addTask("Only accept %s BGP prefixes from the customer, warn at %s percent and do not shut down the session!" % (random.randrange(500, 1000, 100), random.randrange(50, 100, 10)))
+        c.addBreaks()
+
+# interAS options, need more to this first.
+c.add("MPLS Inter-AS.")
+INTERAS_TYPES = ("Option A", "Option B", "Option C")
+INTERAS = random.choice(INTERAS_TYPES)
+INTERAS_RT = ("rewrite", "import")
+c.addTask("ISP 1 and ISP 2 plan on offering services to its customers via MPLS Inter-AS %s" % INTERAS)
+if INTERAS == "Option A":
+    if random.randint(0, 1) == 1:
+        c.addTask("Select a single L3VPN customer in each network and extend services across the ASBR's.")
+    else:
+        c.addTask("Select a single L3VPN customer and L2VPN customer in each network and extend services across the ASBR's")
+    if random.randint(0, 1) == 1:
+        c.addTask("Select a single 6VPE customer in each network and extend services across the ASBR's.")
+    else:
+        c.addTask("Extend the customers multicast across the ASBR's.")
+    c.addBreaks()
+elif INTERAS == "Option B":
+    if random.randint(0, 1) == 1:
+        c.addTask("Import the local ISP's RT's as needed on the ASBR.")
+    else:
+        c.addTask("Instruct the ASBR to import all RT's even if they do not have that local VRF on the box.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Select a single L3VPN customer in each network and extend services across the ASBR's.")
+    else:
+        c.addTask("Select a single L3VPN customer and L2VPN customer in each network and extend services across the ASBR's")
+    if random.randint(0, 1) == 1:
+        c.addTask("Select a single 6VPE customer in each network and extend services across the ASBR's.")
+    else:
+        c.addTask("Extend the customers multicast across the ASBR's.")
+    if random.choice(INTERAS_RT) == "rewrite":
+        c.addTask("Rewrite the RT's on the ASBR's so each networks PE's do not need to import any additional RT values.")
+    else:
+        c.addTask("Have the ASBR and all PE's import each others RT's to ensure all routes are received as needed.")
+    c.addBreaks()
+else:
+    if random.randint(0, 1) == 1:
+        c.addTask("Select a single L3VPN customer in each network and extend services across the ASBR's.")
+    else:
+        c.addTask("Select a single L3VPN customer and L2VPN customer in each network and extend services across the ASBR's")
+    if random.randint(0, 1) == 1:
+        c.addTask("Select a single 6VPE customer in each network and extend services across the ASBR's.")
+    else:
+        c.addTask("Extend the customers multicast across the ASBR's.")
+    if random.randint(0, 1) == 1:
+        c.addTask("Make the existing RR's the L3VPN RR's, make sure it is not in the datapath unless it needs to be.")
+    else:
+        c.addTask("Make the existing RR's the L3VPN RR's, make sure it remains in the data path no matter what.")
+    c.addBreaks()
+
+# go back, add a place holder for segment routing and then overlays such as L2TPv3, DMVPN, etc.
+#Edge QoS, PE-CE MCAST
 #IGP tweaks on L3VPN PE-CE protocols (timers? etc?)
-#interAS policies
+#NEED TO REORDER SOME TASKS, think about moving away from the blueprint format and going by tech while still following the blueprint,  ie L3VPN as it is now, vs L3VPN ISP side and L3VPN PE-CE
+#as the bluerint does in two different sections (2 and 3).
 #VIRL base configs
-#peering with the "internet" and peering RPL policies.
-
 
 c.output()
