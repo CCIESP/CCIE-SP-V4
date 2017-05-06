@@ -1,5 +1,5 @@
-# CCIE-SP-V4
-CCIE-SP-V4 random lab generator
+# CCIE-SP-V4.1
+CCIE-SP-V4.1 random lab generator
 
 The goal is this project is to create a random mock CCIE-SP configuration section based on the CCIE-SP blueprint (https://learningcontent.cisco.com/cln_storage/text/cln/marketing/exam-topics/400-201_ccieSP.pdf) each time the user runs the program.
 
